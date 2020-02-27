@@ -3,9 +3,16 @@ resource "aws_security_group" "es" {
   vpc_id      = data.terraform_remote_state.vpc.outputs.vpc_id
 
   ingress {
-    from_port   = 0
-    to_port     = 65535
-    protocol    = "TCP"
+    from_port   = 80
+    to_port     = 80
+    protocol    = "tcp"
+    cidr_blocks = data.terraform_remote_state.vpc.outputs.private_subnets_cidr_blocks
+  }
+  
+  ingress {
+    from_port   = 443
+    to_port     = 443
+    protocol    = "tcp"
     cidr_blocks = data.terraform_remote_state.vpc.outputs.private_subnets_cidr_blocks
   }
 
@@ -75,6 +82,6 @@ CONFIG
   tags = var.es_tags
 
   depends_on = [
-    "aws_iam_service_linked_role.es",
+    aws_iam_service_linked_role.es,
   ]
 }
